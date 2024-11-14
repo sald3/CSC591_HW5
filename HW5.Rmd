@@ -1,0 +1,68 @@
+---
+title: "HW5"
+author: "Salvatore DiMaggio"
+date: "2024-11-14"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r HW5}
+load("~/Downloads/house_prices.rda")
+library(ggplot2)
+library(tidyr)
+library(lubridate)
+
+# 1a
+house_prices$year <- year(house_prices$date)
+
+ggplot(house_prices, aes(x = year, y = house_price_index, group = state)) +
+  geom_line() +
+  facet_wrap(~state) +
+  scale_x_continuous(breaks = c(1980, 2000, 2020), labels = c("'80", "'00", "'20")) +
+  labs(x = "Year", y = "House Price Index", title = "House Price Index Trend by State") +
+  theme_minimal()
+
+# 1b
+house_reshaped <- house_prices %>%
+  gather(key = "measure", value = "value", house_price_index, unemploy_perc, -state, -date, -year)
+
+# 1c
+ggplot(house_reshaped, aes(x = year, y = value, color = measure, group = interaction(state, measure))) +
+  geom_line() +
+  facet_wrap(~state) +
+  scale_x_continuous(breaks = c(1980, 2000, 2020), labels = c("'80", "'00", "'20")) +
+  labs(x = "Year", y = "Value", color = "Measure", title = "Trends for House Price Index and Unemployment Percentage by State") +
+  theme_minimal()
+#This graph effectively shows the trends for both house_price_index and unemploy_perc across states. However, plotting two unrelated measures on the same axis can lead to confusion, as the scales and trends for each may differ significantly.
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+ggplot(house_prices, aes(x = year, y = house_price_index, group = state)) +
+  geom_line() +
+  facet_wrap(~state) +
+  scale_x_continuous(breaks = c(1980, 2000, 2020), labels = c("'80", "'00", "'20")) +
+  labs(x = "Year", y = "House Price Index", title = "House Price Index Trend by State") +
+  theme_minimal()
+
+ggplot(house_reshaped, aes(x = year, y = value, color = measure, group = interaction(state, measure))) +
+  geom_line() +
+  facet_wrap(~state) +
+  scale_x_continuous(breaks = c(1980, 2000, 2020), labels = c("'80", "'00", "'20")) +
+  labs(x = "Year", y = "Value", color = "Measure", title = "Trends for House Price Index and Unemployment Percentage by State") +
+  theme_minimal()
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
